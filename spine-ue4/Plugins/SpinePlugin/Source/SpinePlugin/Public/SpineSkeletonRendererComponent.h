@@ -49,6 +49,9 @@ public:
 	/* Updates this skeleton renderer using the provided skeleton animation component. */
 	void UpdateRenderer(USpineSkeletonComponent *Skeleton);
 
+	/* Clear all cached materials to force generation on next update. */
+	void ClearCachedMaterials();
+
 	// Material Instance parents
 	UPROPERTY(Category = Spine, EditAnywhere, BlueprintReadWrite)
 	UMaterialInterface *NormalBlendMaterial;
@@ -105,4 +108,8 @@ protected:
 
 	spine::Vector<float> worldVertices;
 	spine::SkeletonClipping clipper;
+
+private:
+
+	float ScaleFactor = 1.f;
 };

@@ -66,6 +66,9 @@ public:
 
 	virtual void BeginDestroy() override;
 
+	UPROPERTY(EditDefaultsOnly)
+	float ScaleFactor = 1.f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DefaultMix = 0;
 

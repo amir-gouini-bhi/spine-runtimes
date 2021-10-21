@@ -67,6 +67,18 @@ void USpineSkeletonRendererComponent::BeginPlay() {
 	Super::BeginPlay();
 }
 
+void USpineSkeletonRendererComponent::ClearCachedMaterials()
+{
+	atlasNormalBlendMaterials.SetNum(0);
+	pageToNormalBlendMaterial.Empty();
+	atlasAdditiveBlendMaterials.SetNum(0);
+	pageToAdditiveBlendMaterial.Empty();
+	atlasMultiplyBlendMaterials.SetNum(0);
+	pageToMultiplyBlendMaterial.Empty();
+	atlasScreenBlendMaterials.SetNum(0);
+	pageToScreenBlendMaterial.Empty();
+}
+
 void USpineSkeletonRendererComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -80,18 +92,15 @@ void USpineSkeletonRendererComponent::TickComponent(float DeltaTime, ELevelTick 
 }
 
 void USpineSkeletonRendererComponent::UpdateRenderer(USpineSkeletonComponent *skeleton) {
+
+	// refresh ScaleFactor that will be used for this update
+	ScaleFactor = skeleton->SkeletonData->ScaleFactor;
+	
 	if (skeleton && !skeleton->IsBeingDestroyed() && skeleton->GetSkeleton() && skeleton->Atlas) {
 		skeleton->GetSkeleton()->getColor().set(Color.R, Color.G, Color.B, Color.A);
 
 		if (atlasNormalBlendMaterials.Num() != skeleton->Atlas->atlasPages.Num()) {
-			atlasNormalBlendMaterials.SetNum(0);
-			pageToNormalBlendMaterial.Empty();
-			atlasAdditiveBlendMaterials.SetNum(0);
-			pageToAdditiveBlendMaterial.Empty();
-			atlasMultiplyBlendMaterials.SetNum(0);
-			pageToMultiplyBlendMaterial.Empty();
-			atlasScreenBlendMaterials.SetNum(0);
-			pageToScreenBlendMaterial.Empty();
+			ClearCachedMaterials();
 
 			for (int i = 0; i < skeleton->Atlas->atlasPages.Num(); i++) {
 				AtlasPage *currPage = skeleton->Atlas->GetAtlas()->getPages()[i];
@@ -328,7 +337,7 @@ void USpineSkeletonRendererComponent::UpdateMesh(Skeleton *Skeleton) {
 		for (int j = 0; j < numVertices << 1; j += 2) {
 			colors.Add(FColor(r, g, b, a));
 			darkColors.Add(FVector(dr, dg, db));
-			vertices.Add(FVector(verticesPtr[j], depthOffset, verticesPtr[j + 1]));
+			vertices.Add(FVector(verticesPtr[j] * ScaleFactor, depthOffset, verticesPtr[j + 1] * ScaleFactor));
 			uvs.Add(FVector2D(attachmentUvs[j], attachmentUvs[j + 1]));
 		}
 
