@@ -94,7 +94,10 @@ void USpineSkeletonRendererComponent::TickComponent(float DeltaTime, ELevelTick 
 void USpineSkeletonRendererComponent::UpdateRenderer(USpineSkeletonComponent *skeleton) {
 
 	// refresh ScaleFactor that will be used for this update
-	ScaleFactor = skeleton->SkeletonData->ScaleFactor;
+	if (skeleton && !skeleton->IsBeingDestroyed() && skeleton->SkeletonData != nullptr)
+	{
+		ScaleFactor = skeleton->SkeletonData->ScaleFactor;
+	}
 	
 	if (skeleton && !skeleton->IsBeingDestroyed() && skeleton->GetSkeleton() && skeleton->Atlas) {
 		skeleton->GetSkeleton()->getColor().set(Color.R, Color.G, Color.B, Color.A);
