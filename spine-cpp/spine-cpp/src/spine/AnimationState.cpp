@@ -411,6 +411,9 @@ void AnimationState::update(float delta) {
 }
 
 bool AnimationState::apply(Skeleton &skeleton) {
+
+	skeleton.clearRootMotionDelta();
+	
 	if (_animationsChanged) {
 		animationsChanged();
 	}

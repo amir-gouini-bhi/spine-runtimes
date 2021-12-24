@@ -281,6 +281,14 @@ float USpineSkeletonComponent::GetAnimationDuration(FString AnimationName) {
 	return 0;
 }
 
+FVector2D USpineSkeletonComponent::GetRootMotionDelta() {
+	CheckState();
+	if (skeleton) {
+		return FVector2D(skeleton->getRootMotionDeltaX(), skeleton->getRootMotionDeltaY());
+	}
+	return FVector2D::ZeroVector;
+}
+
 void USpineSkeletonComponent::BeginPlay() {
 	Super::BeginPlay();
 }

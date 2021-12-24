@@ -72,6 +72,7 @@
 #include <spine/TransformConstraintData.h>
 #include <spine/TransformConstraintTimeline.h>
 #include <spine/TranslateTimeline.h>
+#include <spine/RootMotionTimeline.h>
 
 using namespace spine;
 
@@ -965,9 +966,13 @@ Animation *SkeletonBinary::readAnimation(const String &name, DataInput *input, S
 		}
 	}
 
+	// compute the bone index of the bone used for root motion
+	int rootMotionBoneIdx = ContainerUtil::findIndexWithName(skeletonData->_bones, RootMotionTimeline::RootMotionBoneName);
+
 	// Bone timelines.
 	for (int i = 0, n = readVarint(input, true); i < n; ++i) {
 		int boneIndex = readVarint(input, true);
+		bool rootMotionBone = boneIndex == rootMotionBoneIdx;
 		for (int ii = 0, nn = readVarint(input, true); ii < nn; ++ii) {
 			unsigned char timelineType = readByte(input);
 			int frameCount = readVarint(input, true);
@@ -979,14 +984,41 @@ Animation *SkeletonBinary::readAnimation(const String &name, DataInput *input, S
 											new (__FILE__, __LINE__) RotateTimeline(frameCount, bezierCount, boneIndex),
 											1);
 					break;
-				case BONE_TRANSLATE:
-					timeline = readTimeline2(input, new (__FILE__, __LINE__) TranslateTimeline(frameCount, bezierCount, boneIndex), scale);
+				case BONE_TRANSLATE: {
+						if (rootMotionBone) {
+							timeline = readTimeline2(input,
+								new (__FILE__, __LINE__) RootMotionTimeline(frameCount, bezierCount, boneIndex),
+								scale);
+						} else {
+							timeline = readTimeline2(input,
+								new (__FILE__, __LINE__) TranslateTimeline(frameCount, bezierCount, boneIndex),
+								scale);
+						}
+					}
 					break;
-				case BONE_TRANSLATEX:
-					timeline = readTimeline(input, new (__FILE__, __LINE__) TranslateXTimeline(frameCount, bezierCount, boneIndex), scale);
+				case BONE_TRANSLATEX: {
+						if (rootMotionBone) {
+							timeline = readTimeline(input,
+								new (__FILE__, __LINE__) RootMotionXTimeline(frameCount, bezierCount, boneIndex),
+								scale);
+						} else {
+							timeline = readTimeline(input,
+								new (__FILE__, __LINE__) TranslateXTimeline(frameCount, bezierCount, boneIndex),
+								scale);
+						}
+					}
 					break;
-				case BONE_TRANSLATEY:
-					timeline = readTimeline(input, new (__FILE__, __LINE__) TranslateYTimeline(frameCount, bezierCount, boneIndex), scale);
+				case BONE_TRANSLATEY: {
+						if (rootMotionBone) {
+							timeline = readTimeline(input,
+								new (__FILE__, __LINE__) RootMotionYTimeline(frameCount, bezierCount, boneIndex),
+								scale);
+						} else {
+							timeline = readTimeline(input,
+								new (__FILE__, __LINE__) TranslateYTimeline(frameCount, bezierCount, boneIndex),
+								scale);
+						}
+					}
 					break;
 				case BONE_SCALE:
 					timeline = readTimeline2(input,

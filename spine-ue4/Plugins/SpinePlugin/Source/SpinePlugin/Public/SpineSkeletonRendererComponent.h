@@ -97,6 +97,8 @@ public:
 
 	virtual void FinishDestroy() override;
 
+	float GetScaleFactor() const;
+
 protected:
 	void UpdateRendererMaterial(spine::AtlasPage *CurrentPage, UTexture2D *Texture,
 								UMaterialInstanceDynamic *&CurrentInstance, UMaterialInterface *ParentMaterial,

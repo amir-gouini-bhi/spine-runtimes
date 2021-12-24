@@ -63,6 +63,11 @@ void USpineSkeletonRendererComponent::FinishDestroy() {
 	Super::FinishDestroy();
 }
 
+float USpineSkeletonRendererComponent::GetScaleFactor() const
+{
+	return ScaleFactor;
+}
+
 void USpineSkeletonRendererComponent::BeginPlay() {
 	Super::BeginPlay();
 }

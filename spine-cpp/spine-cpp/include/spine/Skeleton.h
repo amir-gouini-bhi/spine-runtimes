@@ -112,6 +112,12 @@ namespace spine {
 
 		friend class TwoColorTimeline;
 
+		friend class RootMotionTimeline;
+
+		friend class RootMotionXTimeline;
+
+		friend class RootMotionYTimeline;
+
 	public:
 		explicit Skeleton(SkeletonData *skeletonData);
 
@@ -226,6 +232,12 @@ namespace spine {
 
 		void setScaleY(float inValue);
 
+		float getRootMotionDeltaX();
+
+		float getRootMotionDeltaY();
+
+		void clearRootMotionDelta();
+
 	private:
 		SkeletonData *_data;
 		Vector<Bone *> _bones;
@@ -240,6 +252,7 @@ namespace spine {
 		float _time;
 		float _scaleX, _scaleY;
 		float _x, _y;
+		float _rootMotionDeltaX, _rootMotionDeltaY;
 
 		void sortIkConstraint(IkConstraint *constraint);
 

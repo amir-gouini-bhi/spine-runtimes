@@ -93,6 +93,12 @@ namespace spine {
 
 		friend class TranslateYTimeline;
 
+		friend class RootMotionTimeline;
+		
+		friend class RootMotionXTimeline;
+
+		friend class RootMotionYTimeline;
+
 	RTTI_DECL
 
 	public:

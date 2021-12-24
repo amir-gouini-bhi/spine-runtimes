@@ -73,6 +73,8 @@
 #include <spine/TranslateTimeline.h>
 #include <spine/Vertices.h>
 
+#include "spine/RootMotionTimeline.h"
+
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 #define strdup _strdup
 #endif
@@ -1017,9 +1019,13 @@ Animation *SkeletonJson::readAnimation(Json *root, SkeletonData *skeletonData) {
 		}
 	}
 
+	// compute the bone index of the bone used for root motion
+	int rootMotionBoneIdx = ContainerUtil::findIndexWithName(skeletonData->_bones, RootMotionTimeline::RootMotionBoneName);
+
 	/** Bone timelines. */
 	for (boneMap = bones ? bones->_child : 0; boneMap; boneMap = boneMap->_next) {
 		int boneIndex = ContainerUtil::findIndexWithName(skeletonData->_bones, boneMap->_name);
+		bool rootMotionBone = boneIndex == rootMotionBoneIdx;
 		if (boneIndex == -1) {
 			ContainerUtil::cleanUpVectorOfPointers(timelines);
 			setError(NULL, "Bone not found: ", boneMap->_name);
@@ -1035,16 +1041,28 @@ Animation *SkeletonJson::readAnimation(Json *root, SkeletonData *skeletonData) {
 										   new RotateTimeline(frames, frames, boneIndex), 0,
 										   1));
 			} else if (strcmp(timelineMap->_name, "translate") == 0) {
-				TranslateTimeline *timeline = new TranslateTimeline(frames, frames << 1,
-																	boneIndex);
+				CurveTimeline2* timeline;
+				if (rootMotionBone) {
+					timeline = new RootMotionTimeline(frames, frames << 1, boneIndex);
+				} else {
+					timeline = new TranslateTimeline(frames, frames << 1, boneIndex);
+				}
 				timelines.add(readTimeline(timelineMap->_child, timeline, "x", "y", 0, _scale));
 			} else if (strcmp(timelineMap->_name, "translatex") == 0) {
-				TranslateXTimeline *timeline = new TranslateXTimeline(frames, frames,
-																	  boneIndex);
+				CurveTimeline1* timeline;
+				if (rootMotionBone) {
+					timeline = new RootMotionXTimeline(frames, frames, boneIndex);
+				} else {
+					timeline = new TranslateXTimeline(frames, frames, boneIndex);
+				}
 				timelines.add(readTimeline(timelineMap->_child, timeline, 0, _scale));
 			} else if (strcmp(timelineMap->_name, "translatey") == 0) {
-				TranslateYTimeline *timeline = new TranslateYTimeline(frames, frames,
-																	  boneIndex);
+				CurveTimeline1* timeline;
+				if (rootMotionBone) {
+					timeline = new RootMotionYTimeline(frames, frames, boneIndex);
+				} else {
+					timeline = new TranslateYTimeline(frames, frames, boneIndex);
+				}
 				timelines.add(readTimeline(timelineMap->_child, timeline, 0, _scale));
 			} else if (strcmp(timelineMap->_name, "scale") == 0) {
 				ScaleTimeline *timeline = new (__FILE__, __LINE__) ScaleTimeline(frames,

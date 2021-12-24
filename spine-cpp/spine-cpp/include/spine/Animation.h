@@ -96,6 +96,12 @@ namespace spine {
 
 		friend class TwoColorTimeline;
 
+		friend class RootMotionTimeline;
+		
+		friend class RootMotionXTimeline;
+
+		friend class RootMotionYTimeline;
+
 	public:
 		Animation(const String &name, Vector<Timeline *> &timelines, float duration);
 

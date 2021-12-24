@@ -63,6 +63,12 @@ namespace spine {
 
 		friend class TranslateYTimeline;
 
+		friend class RootMotionTimeline;
+		
+		friend class RootMotionXTimeline;
+
+		friend class RootMotionYTimeline;
+
 	public:
 		BoneData(int index, const String &name, BoneData *parent = NULL);
 

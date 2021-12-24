@@ -568,6 +568,20 @@ void Skeleton::setScaleY(float inValue) {
 	_scaleY = inValue;
 }
 
+float Skeleton::getRootMotionDeltaX() {
+	return _rootMotionDeltaX;
+}
+
+float Skeleton::getRootMotionDeltaY() {
+	return _rootMotionDeltaY;
+}
+
+void Skeleton::clearRootMotionDelta() {
+	_rootMotionDeltaX = 0.f;
+	_rootMotionDeltaY = 0.f;
+}
+
+
 void Skeleton::sortIkConstraint(IkConstraint *constraint) {
 	constraint->_active = constraint->_target->_active && (!constraint->_data.isSkinRequired() ||
 														   (_skin && _skin->_constraints.contains(&constraint->_data)));

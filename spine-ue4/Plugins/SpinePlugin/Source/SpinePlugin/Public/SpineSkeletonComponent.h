@@ -124,6 +124,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Components|Spine|Skeleton")
 	float GetAnimationDuration(FString AnimationName);
 
+	UFUNCTION(BlueprintCallable, Category = "Components|Spine|Skeleton")
+	FVector2D GetRootMotionDelta();
+
 	UPROPERTY(BlueprintAssignable, Category = "Components|Spine|Skeleton")
 	FSpineBeforeUpdateWorldTransformDelegate BeforeUpdateWorldTransform;
 
