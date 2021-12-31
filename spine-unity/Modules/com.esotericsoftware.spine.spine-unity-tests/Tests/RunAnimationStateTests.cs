@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated September 24, 2021. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2021, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -27,43 +27,40 @@
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-import { BoneData } from "./BoneData";
-import { Color } from "./Utils";
+using NUnit.Framework;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.TestTools;
 
-/** Stores the setup pose for a {@link Slot}. */
-export class SlotData {
-	/** The index of the slot in {@link Skeleton#getSlots()}. */
-	index: number = 0;
+namespace Spine.Unity.Tests {
+	public class RunAnimationStateTests {
+		[Test]
+		public void RunAnimationStateTestsSimplePasses () {
+			AnimationStateTests.logImplementation += Log;
+			AnimationStateTests.failImplementation += Fail;
 
-	/** The name of the slot, which is unique across all slots in the skeleton. */
-	name: string = null;
+			string testJsonFilename = "test";
+			string testJsonPathEnd = "tests/assets/" + testJsonFilename + ".json";
+			var guids = UnityEditor.AssetDatabase.FindAssets(testJsonFilename + " t:textasset");
+			if (guids.Length <= 0) Fail(testJsonFilename + ".json asset not found.");
 
-	/** The bone this slot belongs to. */
-	boneData: BoneData = null;
+			foreach (var guid in guids) {
+				string assetPath = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
+				if (assetPath.EndsWith(testJsonPathEnd)) {
+					AnimationStateTests.Main(assetPath);
+					return;
+				}
+			}
+			Fail(testJsonPathEnd + " not found.");
+		}
 
-	/** The color used to tint the slot's attachment. If {@link #getDarkColor()} is set, this is used as the light color for two
-	 * color tinting. */
-	color = new Color(1, 1, 1, 1);
+		public void Log (string message) {
+			UnityEngine.Debug.Log(message);
+		}
 
-	/** The dark color used to tint the slot's attachment for two color tinting, or null if two color tinting is not used. The dark
-	 * color's alpha is not used. */
-	darkColor: Color = null;
-
-	/** The name of the attachment that is visible for this slot in the setup pose, or null if no attachment is visible. */
-	attachmentName: string = null;
-
-	/** The blend mode for drawing the slot's attachment. */
-	blendMode: BlendMode = null;
-
-	constructor (index: number, name: string, boneData: BoneData) {
-		if (index < 0) throw new Error("index must be >= 0.");
-		if (!name) throw new Error("name cannot be null.");
-		if (!boneData) throw new Error("boneData cannot be null.");
-		this.index = index;
-		this.name = name;
-		this.boneData = boneData;
+		public void Fail (string message) {
+			Assert.Fail(message);
+		}
 	}
 }
-
-/** Determines how images are blended with existing pixels when drawn. */
-export enum BlendMode { Normal, Additive, Multiply, Screen }
