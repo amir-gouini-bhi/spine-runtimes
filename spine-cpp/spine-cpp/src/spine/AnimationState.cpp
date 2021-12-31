@@ -63,7 +63,7 @@ TrackEntry::TrackEntry() : _animation(NULL), _previous(NULL), _next(NULL), _mixi
 						   _animationEnd(0), _animationLast(0), _nextAnimationLast(0), _delay(0), _trackTime(0),
 						   _trackLast(0), _nextTrackLast(0), _trackEnd(0), _timeScale(1.0f), _alpha(0), _mixTime(0),
 						   _mixDuration(0), _interruptAlpha(0), _totalAlpha(0), _mixBlend(MixBlend_Replace),
-						   _listener(dummyOnAnimationEventFunc), _listenerObject(NULL) {
+						   _listener(dummyOnAnimationEventFunc), _listenerObject(NULL), _rootMotionID(InvalidRootMotionID) {
 }
 
 TrackEntry::~TrackEntry() {}
@@ -85,6 +85,12 @@ void TrackEntry::setHoldPrevious(bool inValue) { _holdPrevious = inValue; }
 bool TrackEntry::getReverse() { return _reverse; }
 
 void TrackEntry::setReverse(bool inValue) { _reverse = inValue; }
+
+bool TrackEntry::getApplyRootMotion() { return _rootMotionID != InvalidRootMotionID; }
+
+int TrackEntry::getRootMotionID() { return _rootMotionID; }
+
+void TrackEntry::setRootMotionID(int inRootMotionID) { _rootMotionID = inRootMotionID; }
 
 float TrackEntry::getDelay() { return _delay; }
 
@@ -427,6 +433,9 @@ bool AnimationState::apply(Skeleton &skeleton) {
 
 		TrackEntry &current = *currentP;
 
+		// set value of current track in skeleton to be readable when applying timeline
+		skeleton._currRootMotionID = current.getRootMotionID();
+
 		applied = true;
 		MixBlend blend = i == 0 ? MixBlend_First : current._mixBlend;
 
@@ -487,6 +496,9 @@ bool AnimationState::apply(Skeleton &skeleton) {
 		current._nextAnimationLast = animationTime;
 		current._nextTrackLast = current._trackTime;
 	}
+
+	// reset RootMotionID after timelines application
+	skeleton._currRootMotionID = TrackEntry::InvalidRootMotionID;
 
 	int setupState = _unkeyedState + Setup;
 	Vector<Slot *> &slots = skeleton.getSlots();
@@ -955,6 +967,7 @@ TrackEntry *AnimationState::newTrackEntry(size_t trackIndex, Animation *animatio
 	entry._animation = animation;
 	entry._loop = loop;
 	entry._holdPrevious = 0;
+	entry._rootMotionID = TrackEntry::InvalidRootMotionID;
 
 	entry._eventThreshold = 0;
 	entry._attachmentThreshold = 0;

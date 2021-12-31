@@ -125,7 +125,7 @@ public:
 	float GetAnimationDuration(FString AnimationName);
 
 	UFUNCTION(BlueprintCallable, Category = "Components|Spine|Skeleton")
-	FVector2D GetRootMotionDelta();
+	FVector2D GetRootMotionDelta(int RootMotionID);
 
 	UPROPERTY(BlueprintAssignable, Category = "Components|Spine|Skeleton")
 	FSpineBeforeUpdateWorldTransformDelegate BeforeUpdateWorldTransform;

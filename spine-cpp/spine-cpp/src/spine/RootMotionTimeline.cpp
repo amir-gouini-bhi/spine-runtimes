@@ -90,6 +90,10 @@ void RootMotionTimeline::apply(Skeleton &skeleton, float lastTime, float time, V
 	SP_UNUSED(lastTime);
 	SP_UNUSED(pEvents);
 	SP_UNUSED(direction);
+
+	if (skeleton._currRootMotionID == TrackEntry::InvalidRootMotionID) {
+		return;
+	}
 	
 	Bone *bone = skeleton._bones[_boneIndex];
 	if (!bone->_active) return;
@@ -124,12 +128,16 @@ void RootMotionTimeline::apply(Skeleton &skeleton, float lastTime, float time, V
 		case MixBlend_Setup:
 		case MixBlend_First:
 		case MixBlend_Replace:
-			skeleton._rootMotionDeltaX = x * alpha;
-			skeleton._rootMotionDeltaY = y * alpha;
+			skeleton._rootMotionDeltaX.insert_or_assign(skeleton._currRootMotionID, x * alpha);
+			skeleton._rootMotionDeltaY.insert_or_assign(skeleton._currRootMotionID, y * alpha);
 			break;
 		case MixBlend_Add:
-			skeleton._rootMotionDeltaX += x * alpha;
-			skeleton._rootMotionDeltaY += y * alpha;
+			auto searchX = skeleton._rootMotionDeltaX.find(skeleton._currRootMotionID);
+			auto searchY = skeleton._rootMotionDeltaY.find(skeleton._currRootMotionID);
+			float addedX = x * alpha + (searchX == skeleton._rootMotionDeltaX.end() ? 0 : searchX->second);
+			float addedY = y * alpha + (searchY == skeleton._rootMotionDeltaY.end() ? 0 : searchY->second);
+			skeleton._rootMotionDeltaX.insert_or_assign(skeleton._currRootMotionID, addedX);
+			skeleton._rootMotionDeltaY.insert_or_assign(skeleton._currRootMotionID, addedY);
 	}
 }
 
@@ -151,6 +159,10 @@ void RootMotionXTimeline::apply(Skeleton &skeleton, float lastTime, float time, 
 	SP_UNUSED(pEvents);
 	SP_UNUSED(direction);
 
+	if (skeleton._currRootMotionID == TrackEntry::InvalidRootMotionID) {
+		return;
+	}
+
 	Bone *bone = skeleton._bones[_boneIndex];
 	if (!bone->_active) return;
 
@@ -166,10 +178,12 @@ void RootMotionXTimeline::apply(Skeleton &skeleton, float lastTime, float time, 
 		case MixBlend_Setup:
 		case MixBlend_First:
 		case MixBlend_Replace:
-			skeleton._rootMotionDeltaX = x * alpha;
+			skeleton._rootMotionDeltaX.insert_or_assign(skeleton._currRootMotionID, x * alpha);
 			break;
 		case MixBlend_Add:
-			skeleton._rootMotionDeltaX += x * alpha;
+			auto searchX = skeleton._rootMotionDeltaX.find(skeleton._currRootMotionID);
+			float addedX = x * alpha + (searchX == skeleton._rootMotionDeltaX.end() ? 0 : searchX->second);
+			skeleton._rootMotionDeltaX.insert_or_assign(skeleton._currRootMotionID, addedX);
 	}
 }
 
@@ -191,6 +205,10 @@ void RootMotionYTimeline::apply(Skeleton &skeleton, float lastTime, float time, 
 	SP_UNUSED(pEvents);
 	SP_UNUSED(direction);
 
+	if (skeleton._currRootMotionID == TrackEntry::InvalidRootMotionID) {
+		return;
+	}
+
 	Bone *bone = skeleton._bones[_boneIndex];
 	if (!bone->_active) return;
 
@@ -206,9 +224,11 @@ void RootMotionYTimeline::apply(Skeleton &skeleton, float lastTime, float time, 
 		case MixBlend_Setup:
 		case MixBlend_First:
 		case MixBlend_Replace:
-			skeleton._rootMotionDeltaY = y * alpha;
+			skeleton._rootMotionDeltaY.insert_or_assign(skeleton._currRootMotionID, y * alpha);
 			break;
 		case MixBlend_Add:
-			skeleton._rootMotionDeltaY += y * alpha;
+			auto searchY = skeleton._rootMotionDeltaY.find(skeleton._currRootMotionID);
+			float addedY = y * alpha + (searchY == skeleton._rootMotionDeltaY.end() ? 0 : searchY->second);
+			skeleton._rootMotionDeltaY.insert_or_assign(skeleton._currRootMotionID, addedY);
 	}
 }

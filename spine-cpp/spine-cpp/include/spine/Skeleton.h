@@ -30,6 +30,7 @@
 #ifndef Spine_Skeleton_h
 #define Spine_Skeleton_h
 
+#include <unordered_map>
 #include <spine/Vector.h>
 #include <spine/MathUtil.h>
 #include <spine/SpineObject.h>
@@ -232,9 +233,9 @@ namespace spine {
 
 		void setScaleY(float inValue);
 
-		float getRootMotionDeltaX();
+		float getRootMotionDeltaX(int RootMotionID);
 
-		float getRootMotionDeltaY();
+		float getRootMotionDeltaY(int RootMotionID);
 
 		void clearRootMotionDelta();
 
@@ -252,7 +253,10 @@ namespace spine {
 		float _time;
 		float _scaleX, _scaleY;
 		float _x, _y;
-		float _rootMotionDeltaX, _rootMotionDeltaY;
+
+		int _currRootMotionID = -1;
+		std::unordered_map<int, float> _rootMotionDeltaX;
+		std::unordered_map<int, float> _rootMotionDeltaY;
 
 		void sortIkConstraint(IkConstraint *constraint);
 

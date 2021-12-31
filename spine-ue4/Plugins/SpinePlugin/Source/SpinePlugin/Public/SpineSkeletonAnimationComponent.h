@@ -186,6 +186,13 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable, Category = "Components|Spine|TrackEntry")
+	bool GetApplyRootMotion() { return entry ? entry->getApplyRootMotion() : false; }
+	UFUNCTION(BlueprintCallable, Category = "Components|Spine|TrackEntry")
+	void SetRootMotionID(int RootMotionID = 0) {
+		if (entry) entry->setRootMotionID(RootMotionID);
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "Components|Spine|TrackEntry")
 	FString getAnimationName() { return entry ? entry->getAnimation()->getName().buffer() : ""; }
 
 	UFUNCTION(BlueprintCallable, Category = "Components|Spine|TrackEntry")

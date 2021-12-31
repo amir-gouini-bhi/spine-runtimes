@@ -131,6 +131,12 @@ namespace spine {
 
 		void setReverse(bool inValue);
 
+		bool getApplyRootMotion();
+
+		int getRootMotionID();
+
+		void setRootMotionID(int inRootMotionID);
+
 		/// Seconds to postpone playing the animation. When a track entry is the current track entry, delay postpones incrementing
 		/// the track time. When a track entry is queued, delay is the time from the start of the previous animation to when the
 		/// track entry will become the current track entry.
@@ -267,6 +273,8 @@ namespace spine {
 
 		void setListener(AnimationStateListenerObject *listener);
 
+		static const int InvalidRootMotionID = -1;
+
 	private:
 		Animation *_animation;
 		TrackEntry *_previous;
@@ -286,6 +294,7 @@ namespace spine {
 		Vector<float> _timelinesRotation;
 		AnimationStateListener _listener;
 		AnimationStateListenerObject *_listenerObject;
+		int _rootMotionID;
 
 		void reset();
 	};

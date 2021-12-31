@@ -568,17 +568,19 @@ void Skeleton::setScaleY(float inValue) {
 	_scaleY = inValue;
 }
 
-float Skeleton::getRootMotionDeltaX() {
-	return _rootMotionDeltaX;
+float Skeleton::getRootMotionDeltaX(int RootMotionID) {
+	auto it = _rootMotionDeltaX.find(RootMotionID);
+	return it == _rootMotionDeltaX.end() ? 0 : it->second;
 }
 
-float Skeleton::getRootMotionDeltaY() {
-	return _rootMotionDeltaY;
+float Skeleton::getRootMotionDeltaY(int RootMotionID) {
+	auto it = _rootMotionDeltaY.find(RootMotionID);
+	return it == _rootMotionDeltaY.end() ? 0 : it->second;
 }
 
 void Skeleton::clearRootMotionDelta() {
-	_rootMotionDeltaX = 0.f;
-	_rootMotionDeltaY = 0.f;
+	_rootMotionDeltaX.clear();
+	_rootMotionDeltaY.clear();
 }
 
 

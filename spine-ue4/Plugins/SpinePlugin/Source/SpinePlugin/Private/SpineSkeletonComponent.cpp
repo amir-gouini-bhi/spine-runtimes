@@ -281,10 +281,10 @@ float USpineSkeletonComponent::GetAnimationDuration(FString AnimationName) {
 	return 0;
 }
 
-FVector2D USpineSkeletonComponent::GetRootMotionDelta() {
+FVector2D USpineSkeletonComponent::GetRootMotionDelta(int RootMotionID) {
 	CheckState();
 	if (skeleton) {
-		return FVector2D(skeleton->getRootMotionDeltaX(), skeleton->getRootMotionDeltaY());
+		return FVector2D(skeleton->getRootMotionDeltaX(RootMotionID), skeleton->getRootMotionDeltaY(RootMotionID));
 	}
 	return FVector2D::ZeroVector;
 }
