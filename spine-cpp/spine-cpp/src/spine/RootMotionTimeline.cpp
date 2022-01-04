@@ -124,20 +124,40 @@ void RootMotionTimeline::apply(Skeleton &skeleton, float lastTime, float time, V
 		y = newY - oldY;
 	}
 
+	auto searchX = skeleton._rootMotionDeltaX.find(skeleton._currRootMotionID);
+	auto searchY = skeleton._rootMotionDeltaY.find(skeleton._currRootMotionID);
+	
 	switch (blend) {
 		case MixBlend_Setup:
 		case MixBlend_First:
 		case MixBlend_Replace:
-			skeleton._rootMotionDeltaX.insert_or_assign(skeleton._currRootMotionID, x * alpha);
-			skeleton._rootMotionDeltaY.insert_or_assign(skeleton._currRootMotionID, y * alpha);
+			if (searchX == skeleton._rootMotionDeltaX.end()) {
+				skeleton._rootMotionDeltaX.emplace(skeleton._currRootMotionID, x * alpha);
+			} else {
+				searchX->second = x * alpha;
+			}
+		
+			if (searchY == skeleton._rootMotionDeltaY.end()) {
+				skeleton._rootMotionDeltaY.emplace(skeleton._currRootMotionID, y * alpha);
+			} else {
+				searchY->second = y * alpha;
+			}
 			break;
 		case MixBlend_Add:
-			auto searchX = skeleton._rootMotionDeltaX.find(skeleton._currRootMotionID);
-			auto searchY = skeleton._rootMotionDeltaY.find(skeleton._currRootMotionID);
 			float addedX = x * alpha + (searchX == skeleton._rootMotionDeltaX.end() ? 0 : searchX->second);
 			float addedY = y * alpha + (searchY == skeleton._rootMotionDeltaY.end() ? 0 : searchY->second);
-			skeleton._rootMotionDeltaX.insert_or_assign(skeleton._currRootMotionID, addedX);
-			skeleton._rootMotionDeltaY.insert_or_assign(skeleton._currRootMotionID, addedY);
+
+			if (searchX == skeleton._rootMotionDeltaX.end()) {
+				skeleton._rootMotionDeltaX.emplace(skeleton._currRootMotionID, addedX);
+			} else {
+				searchX->second = addedX;
+			}
+			
+			if (searchY == skeleton._rootMotionDeltaY.end()) {
+				skeleton._rootMotionDeltaY.emplace(skeleton._currRootMotionID, addedY);
+			} else {
+				searchY->second = addedY;
+			}
 	}
 }
 
@@ -173,17 +193,27 @@ void RootMotionXTimeline::apply(Skeleton &skeleton, float lastTime, float time, 
 	float oldX = getCurveValue(lastTime);
 	float newX = getCurveValue(time);
 	float x = newX - oldX;
+
+	auto searchX = skeleton._rootMotionDeltaX.find(skeleton._currRootMotionID);
 	
 	switch (blend) {
 		case MixBlend_Setup:
 		case MixBlend_First:
 		case MixBlend_Replace:
-			skeleton._rootMotionDeltaX.insert_or_assign(skeleton._currRootMotionID, x * alpha);
+			if (searchX == skeleton._rootMotionDeltaX.end()) {
+				skeleton._rootMotionDeltaX.emplace(skeleton._currRootMotionID, x * alpha);
+			} else {
+				searchX->second = x * alpha;
+			}
 			break;
 		case MixBlend_Add:
-			auto searchX = skeleton._rootMotionDeltaX.find(skeleton._currRootMotionID);
 			float addedX = x * alpha + (searchX == skeleton._rootMotionDeltaX.end() ? 0 : searchX->second);
-			skeleton._rootMotionDeltaX.insert_or_assign(skeleton._currRootMotionID, addedX);
+		
+			if (searchX == skeleton._rootMotionDeltaX.end()) {
+				skeleton._rootMotionDeltaX.emplace(skeleton._currRootMotionID, addedX);
+			} else {
+				searchX->second = addedX;
+			}
 	}
 }
 
@@ -219,16 +249,26 @@ void RootMotionYTimeline::apply(Skeleton &skeleton, float lastTime, float time, 
 	float oldY = getCurveValue(lastTime);
 	float newY = getCurveValue(time);
 	float y = newY - oldY;
+
+	auto searchY = skeleton._rootMotionDeltaY.find(skeleton._currRootMotionID);
 	
 	switch (blend) {
 		case MixBlend_Setup:
 		case MixBlend_First:
 		case MixBlend_Replace:
-			skeleton._rootMotionDeltaY.insert_or_assign(skeleton._currRootMotionID, y * alpha);
+			if (searchY == skeleton._rootMotionDeltaY.end()) {
+				skeleton._rootMotionDeltaY.emplace(skeleton._currRootMotionID, y * alpha);
+			} else {
+				searchY->second = y * alpha;
+			}
 			break;
 		case MixBlend_Add:
-			auto searchY = skeleton._rootMotionDeltaY.find(skeleton._currRootMotionID);
 			float addedY = y * alpha + (searchY == skeleton._rootMotionDeltaY.end() ? 0 : searchY->second);
-			skeleton._rootMotionDeltaY.insert_or_assign(skeleton._currRootMotionID, addedY);
+
+			if (searchY == skeleton._rootMotionDeltaY.end()) {
+				skeleton._rootMotionDeltaY.emplace(skeleton._currRootMotionID, addedY);
+			} else {
+				searchY->second = addedY;
+			}
 	}
 }
