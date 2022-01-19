@@ -86,7 +86,7 @@ void USpineSkeletonComponent::GetSkins(TArray<FString> &Skins) {
 bool USpineSkeletonComponent::HasSkin(const FString skinName) {
 	CheckState();
 	if (skeleton) {
-		return skeleton->getData()->findAnimation(TCHAR_TO_UTF8(*skinName)) != nullptr;
+		return skeleton->getData()->findSkin(TCHAR_TO_UTF8(*skinName)) != nullptr;
 	}
 	return false;
 }
