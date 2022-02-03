@@ -125,6 +125,14 @@ FTransform USpineSkeletonComponent::GetBoneWorldTransform(const FString &BoneNam
 		localTransform.SetAxis(2, FVector(bone->getA(), 0, bone->getC()));
 		localTransform.SetAxis(0, FVector(bone->getB(), 0, bone->getD()));
 		localTransform.SetOrigin(FVector(bone->getWorldX(), 0, bone->getWorldY()));
+
+		// apply ScaleFactor to base transform
+		if (SkeletonData != nullptr)
+		{
+			const float ScaleFactor = SkeletonData->ScaleFactor;
+			baseTransform.MultiplyScale3D(FVector::OneVector * ScaleFactor);
+		}
+
 		localTransform = localTransform * baseTransform.ToMatrixWithScale();
 
 		FTransform result;
