@@ -42,6 +42,7 @@ void USpineBoneFollowerComponent::BeginPlay() {
 void USpineBoneFollowerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (Target == nullptr) Target = GetOwner();
 	if (Target) {
 		USpineSkeletonComponent *skeleton = static_cast<USpineSkeletonComponent *>(Target->GetComponentByClass(USpineSkeletonComponent::StaticClass()));
 		if (skeleton) {
