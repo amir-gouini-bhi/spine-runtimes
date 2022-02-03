@@ -329,7 +329,20 @@ SkeletonData *SkeletonBinary::readSkeletonData(const unsigned char *binary, cons
 	int animationsCount = readVarint(input, true);
 	skeletonData->_animations.setSize(animationsCount, 0);
 	for (int i = 0; i < animationsCount; ++i) {
-		String name(readString(input), true);
+		String fullname(readString(input), true);
+		
+		// remove all folders from animation names
+		int lastSeparatorIndex = -1;
+		for (int charaIndex = fullname.length() - 1; charaIndex >= 0; charaIndex--) {
+			if (fullname.buffer()[charaIndex] == '/') {
+				lastSeparatorIndex = charaIndex;
+				break;
+			}
+		}
+		// copy substring to empty name string
+		String name;
+		name.append(&(fullname.buffer()[lastSeparatorIndex + 1]));
+		
 		Animation *animation = readAnimation(name, input, skeletonData);
 		if (!animation) {
 			delete input;
