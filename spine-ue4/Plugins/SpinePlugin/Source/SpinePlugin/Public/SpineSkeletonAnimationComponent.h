@@ -257,6 +257,12 @@ public:
 	float GetTimeScale();
 
 	UFUNCTION(BlueprintCallable, Category = "Components|Spine|Animation")
+	void AddTimeScaleFactor(float timeScale, FName tag);
+
+	UFUNCTION(BlueprintCallable, Category = "Components|Spine|Animation")
+	void RemoveTimeScaleFactor(FName tag);
+
+	UFUNCTION(BlueprintCallable, Category = "Components|Spine|Animation")
 	UTrackEntry *SetAnimation(int trackIndex, FString animationName, bool loop);
 
 	UFUNCTION(BlueprintCallable, Category = "Components|Spine|Animation")
@@ -324,4 +330,7 @@ private:
 
 	FString lastPreviewAnimation;
 	FString lastPreviewSkin;
+
+	void ApplyTimeScaleFromFactors();
+	TMap<FName, float> TimeScaleFactors;
 };

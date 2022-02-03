@@ -208,6 +208,29 @@ float USpineSkeletonAnimationComponent::GetTimeScale() {
 	return 1;
 }
 
+void USpineSkeletonAnimationComponent::AddTimeScaleFactor(float timeScale, FName tag)
+{
+	TimeScaleFactors.Add(tag, timeScale);
+
+	ApplyTimeScaleFromFactors();
+}
+
+void USpineSkeletonAnimationComponent::RemoveTimeScaleFactor(FName tag)
+{
+	TimeScaleFactors.Remove(tag);
+
+	ApplyTimeScaleFromFactors();
+}
+
+void USpineSkeletonAnimationComponent::ApplyTimeScaleFromFactors()
+{
+	float timeScale = 1.f;
+	for (const auto& TimeScaleFactor : TimeScaleFactors) {
+		timeScale *= TimeScaleFactor.Value;
+	}
+	SetTimeScale(timeScale);
+}
+
 UTrackEntry *USpineSkeletonAnimationComponent::SetAnimation(int trackIndex, FString animationName, bool loop) {
 	CheckState();
 	if (state && skeleton->getData()->findAnimation(TCHAR_TO_UTF8(*animationName))) {
