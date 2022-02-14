@@ -85,6 +85,19 @@ public:
 	UPROPERTY(Category = Spine, EditAnywhere, BlueprintReadWrite)
 	float DepthOffset = 0.1f;
 
+	/**	Invert depth offset (multiply it by -1) if the component's rotation is inverted.
+	 *	Useful when using masked materials.
+	 *	Use DefaultForwardForDepthOffset to define default forward vector.
+	 */
+	UPROPERTY(Category = Spine, EditAnywhere, BlueprintReadWrite)
+	bool bInvertDepthOffsetWithRotation = false;
+
+	/**	The forward vector in world space that is considered to be default for this component.
+	 *	Used for inverting DepthOffset
+	 */
+	UPROPERTY(Category = Spine, EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bInvertDepthOffsetWithRotation"))
+	FVector DefaultForwardForDepthOffset = FVector::RightVector;
+
 	UPROPERTY(Category = Spine, EditAnywhere, BlueprintReadWrite)
 	FName TextureParameterName;
 

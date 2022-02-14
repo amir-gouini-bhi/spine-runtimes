@@ -32,6 +32,9 @@
 #include "spine/spine.h"
 #include <stdlib.h>
 
+DECLARE_STATS_GROUP(TEXT("SpineRenderer"), STATGROUP_SpineRenderer, STATCAT_Advanced);
+DECLARE_CYCLE_STAT(TEXT("SpineRenderer - Update"), STAT_SpineRenderer_Update, STATGROUP_SpineRenderer)
+
 #define LOCTEXT_NAMESPACE "Spine"
 
 using namespace spine;
@@ -98,6 +101,8 @@ void USpineSkeletonRendererComponent::TickComponent(float DeltaTime, ELevelTick 
 
 void USpineSkeletonRendererComponent::UpdateRenderer(USpineSkeletonComponent *skeleton) {
 
+	SCOPE_CYCLE_COUNTER(STAT_SpineRenderer_Update);
+	
 	// refresh ScaleFactor that will be used for this update
 	if (skeleton && !skeleton->IsBeingDestroyed() && skeleton->SkeletonData != nullptr)
 	{
@@ -203,6 +208,16 @@ void USpineSkeletonRendererComponent::UpdateMesh(Skeleton *Skeleton) {
 	if (Skeleton->getColor().a == 0) return;
 
 	float depthOffset = 0;
+	float depthOffsetStep = this->DepthOffset;
+	if (bInvertDepthOffsetWithRotation)
+	{
+		// check if forward vector is opposite of default forward direction
+		if (FVector::DotProduct(GetForwardVector(), DefaultForwardForDepthOffset) < 0.f)
+		{
+			depthOffsetStep	 *= -1.f;
+		}
+	}
+	
 	unsigned short quadIndices[] = {0, 1, 2, 0, 2, 3};
 
 	for (size_t i = 0; i < Skeleton->getSlots().size(); ++i) {
@@ -367,7 +382,7 @@ void USpineSkeletonRendererComponent::UpdateMesh(Skeleton *Skeleton) {
 		}
 
 		idx += numVertices;
-		depthOffset += this->DepthOffset;
+		depthOffset += depthOffsetStep;
 
 		clipper.clipEnd(*slot);
 	}

@@ -29,6 +29,9 @@
 
 #include "SpinePluginPrivatePCH.h"
 
+DECLARE_STATS_GROUP(TEXT("SpineAnimation"), STATGROUP_SpineAnimation, STATCAT_Advanced);
+DECLARE_CYCLE_STAT(TEXT("SpineAnimation - Update"), STAT_SpineAnimation_Update, STATGROUP_SpineAnimation)
+
 #define LOCTEXT_NAMESPACE "Spine"
 
 using namespace spine;
@@ -88,6 +91,9 @@ void USpineSkeletonAnimationComponent::TickComponent(float DeltaTime, ELevelTick
 }
 
 void USpineSkeletonAnimationComponent::InternalTick(float DeltaTime, bool CallDelegates, bool Preview) {
+
+	SCOPE_CYCLE_COUNTER(STAT_SpineAnimation_Update);
+	
 	CheckState();
 
 	if (state && bAutoPlaying) {
